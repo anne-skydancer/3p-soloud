@@ -18,10 +18,16 @@ the output pointer by the interleaved channel count. This protects SoLoud's
 bounded scratch buffers when a device requests a large multichannel buffer.
 The distributed library is a modified upstream build.
 
+`patches/miniaudio-device-selection.patch` preserves the archive's selected
+output device, native sample rate/channel count, and 40 ms period request.
+It rejects unsupported channel layouts and reports device-start failure.
+Device-selection globals must only be changed with the backend stopped or
+before initialization; the viewer serializes device restarts.
+
 The archive's hard-coded raw-audio capture path, volatile callback telemetry,
-device-selection globals, and scheduler changes are not imported by this
-safety patch. The archived viewer adapter must not be linked unchanged until
-its custom device-selection/telemetry ABI has been handled explicitly.
+and scheduler changes are not imported. Viewer code must not reference the
+archived telemetry symbols. Hardware playback and device switching still
+require operator qualification.
 
 ## Build and Package
 

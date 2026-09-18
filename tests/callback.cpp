@@ -7,10 +7,17 @@
 namespace SoLoud
 {
     void soloud_miniaudio_audiomixer(ma_device*, void*, const void*, ma_uint32);
+    extern ma_device_id gSoloudRequestedDeviceId;
+    extern bool gSoloudUseRequestedDeviceId;
 }
 
 int main()
 {
+    SoLoud::gSoloudRequestedDeviceId = {};
+    if (SoLoud::gSoloudUseRequestedDeviceId)
+    {
+        return 1;
+    }
     for (unsigned int channels : {2u, 6u, 8u})
     {
         SoLoud::Soloud engine;

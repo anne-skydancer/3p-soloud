@@ -1,0 +1,40 @@
+diff --git a/src/backend/miniaudio/soloud_miniaudio.cpp b/src/backend/miniaudio/soloud_miniaudio.cpp
+--- a/src/backend/miniaudio/soloud_miniaudio.cpp
++++ b/src/backend/miniaudio/soloud_miniaudio.cpp
+@@ -51,2 +51,4 @@
+     ma_device gDevice;
++    ma_device_id gSoloudRequestedDeviceId;
++    bool gSoloudUseRequestedDeviceId = false;
+ 
+@@ -77,5 +79,10 @@
+         config.playback.format    = ma_format_f32;
+-        config.playback.channels  = aChannels;
+-        config.sampleRate         = aSamplerate;
++        config.playback.channels  = 0;
++        config.sampleRate         = 0;
++        config.periodSizeInMilliseconds = 40;
++        if (gSoloudUseRequestedDeviceId)
++        {
++            config.playback.pDeviceID = &gSoloudRequestedDeviceId;
++        }
+         config.dataCallback       = soloud_miniaudio_audiomixer;
+         config.pUserData          = (void *)aSoloud;
+@@ -89,1 +96,8 @@
++        const ma_uint32 channels = gDevice.playback.channels;
++        if (channels != 1 && channels != 2 && channels != 4 && channels != 6 && channels != 8)
++        {
++            ma_device_uninit(&gDevice);
++            return INVALID_PARAMETER;
++        }
++
+         aSoloud->postinit_internal(gDevice.sampleRate, gDevice.playback.internalPeriodSizeInFrames, aFlags, gDevice.playback.channels);
+@@ -93,3 +107,8 @@
+-        ma_device_start(&gDevice);
++        if (ma_device_start(&gDevice) != MA_SUCCESS)
++        {
++            ma_device_uninit(&gDevice);
++            aSoloud->mBackendCleanupFunc = NULL;
++            return UNKNOWN_ERROR;
++        }
+         aSoloud->mBackendString = "MiniAudio";
+         return 0;

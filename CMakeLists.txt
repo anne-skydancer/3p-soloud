@@ -14,6 +14,10 @@ FetchContent_Declare(soloud_source
         "-DSOURCE_DIR=<SOURCE_DIR>"
         "-DPATCH_FILE=${CMAKE_CURRENT_SOURCE_DIR}/patches/miniaudio-bounded-mix.patch"
         -P "${CMAKE_CURRENT_SOURCE_DIR}/ApplyPatch.cmake"
+        COMMAND "${CMAKE_COMMAND}" "-DGIT_EXECUTABLE=${GIT_EXECUTABLE}"
+        "-DSOURCE_DIR=<SOURCE_DIR>"
+        "-DPATCH_FILE=${CMAKE_CURRENT_SOURCE_DIR}/patches/miniaudio-device-selection.patch"
+        -P "${CMAKE_CURRENT_SOURCE_DIR}/ApplyPatch.cmake"
 )
 FetchContent_MakeAvailable(soloud_source)
 
