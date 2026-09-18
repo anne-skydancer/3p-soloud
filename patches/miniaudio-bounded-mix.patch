@@ -1,0 +1,18 @@
+diff --git a/src/backend/miniaudio/soloud_miniaudio.cpp b/src/backend/miniaudio/soloud_miniaudio.cpp
+--- a/src/backend/miniaudio/soloud_miniaudio.cpp
++++ b/src/backend/miniaudio/soloud_miniaudio.cpp
+@@ -54,5 +54,13 @@
+     void soloud_miniaudio_audiomixer(ma_device* pDevice, void* pOutput, const void* pInput, ma_uint32 frameCount)
+     {
+         SoLoud::Soloud *soloud = (SoLoud::Soloud *)pDevice->pUserData;
+-            soloud->mix((float *)pOutput, frameCount);
++        float *output = (float *)pOutput;
++        ma_uint32 remaining = frameCount;
++        while (remaining > 0)
++        {
++            const ma_uint32 frames = remaining > 1024 ? 1024 : remaining;
++            soloud->mix(output, frames);
++            output += (size_t)frames * pDevice->playback.channels;
++            remaining -= frames;
++        }
+     }
