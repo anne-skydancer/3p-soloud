@@ -32,6 +32,7 @@ add_library(soloud STATIC
     "${soloud_source_SOURCE_DIR}/src/backend/nosound/soloud_nosound.cpp"
     "${soloud_source_SOURCE_DIR}/src/backend/null/soloud_null.cpp"
 )
+set_target_properties(soloud PROPERTIES POSITION_INDEPENDENT_CODE ON)
 target_compile_features(soloud PUBLIC cxx_std_11)
 target_compile_definitions(soloud PRIVATE WITH_MINIAUDIO=1 WITH_NOSOUND=1 WITH_NULL=1)
 target_include_directories(soloud PUBLIC
