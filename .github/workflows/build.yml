@@ -5,6 +5,8 @@ on:
   workflow_dispatch:
 permissions:
   contents: read
+env:
+  AUTOBUILD_BUILD_ID: ${{ github.run_id }}
 jobs:
   package:
     strategy:
