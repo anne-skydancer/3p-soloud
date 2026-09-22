@@ -1,0 +1,37 @@
+name: Build SoLoud packages
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+permissions:
+  contents: read
+env:
+  AUTOBUILD_BUILD_ID: ${{ github.run_id }}
+jobs:
+  package:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: ubuntu-22.04
+            platform: linux64
+          - os: windows-2022
+            platform: windows64
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+      - name: Install packaging tools
+        run: python -m pip install autobuild==3.9.3
+      - name: Build and test
+        run: autobuild build -A 64 -c release
+      - name: Package
+        run: autobuild package -A 64 -c release --archive-format tzst
+      - name: Upload tested package
+        uses: actions/upload-artifact@v4
+        with:
+          name: soloud-${{ matrix.platform }}
+          path: '*.tar.zst'
+          if-no-files-found: error

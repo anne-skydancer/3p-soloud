@@ -1,6 +1,6 @@
 # 3p-soloud
 
-Standalone Windows x64 autobuild dependency for Vulkanstorm. SoLoud is built
+Standalone Windows x64 and Linux x64 autobuild dependency for Vulkanstorm. SoLoud is built
 outside the viewer, using MSVC's dynamic release runtime (/MD). No external
 SOLOUD_ROOT checkout is required by the viewer.
 
@@ -51,6 +51,12 @@ and 0, 1, 1,024, 1,025 and 32,769 frame requests. It verifies silence coverage
 and guard samples without opening an audio device. It does not qualify live
 device output or all viewer audio features.
 
-Only Windows x64 packaging is currently qualified. Release publication and
+Linux uses GCC/Clang, CMake 3.24+, Make, Git and autobuild, with the same build
+commands. It produces position-independent `lib/release/libsoloud.a`; consumers
+must link the platform thread and dynamic-loader libraries. CI builds on Ubuntu
+22.04 and Windows 2022 and runs the same headless callback test before packaging.
+Linux hardware playback and device switching remain unqualified.
+
+Release publication and
 the viewer autobuild URL/hash entry must use the actual generated archive;
 no speculative release URL is provided here.

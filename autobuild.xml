@@ -14,6 +14,32 @@
         <key>version_file</key><string>VERSION.txt</string>
         <key>platforms</key>
         <map>
+            <key>linux64</key>
+            <map>
+                <key>name</key><string>linux64</string>
+                <key>build_directory</key><string>stage</string>
+                <key>manifest</key>
+                <array>
+                    <string>lib/release/libsoloud.a</string>
+                    <string>include/soloud/*.h</string>
+                    <string>LICENSES/*.txt</string>
+                    <string>VERSION.txt</string>
+                </array>
+                <key>configurations</key>
+                <map>
+                    <key>release</key>
+                    <map>
+                        <key>name</key><string>release</string>
+                        <key>default</key><string>True</string>
+                        <key>build</key>
+                        <map>
+                            <key>command</key><string>cmake</string>
+                            <key>options</key>
+                            <array><string>-P</string><string>../build.cmake</string></array>
+                        </map>
+                    </map>
+                </map>
+            </map>
             <key>windows64</key>
             <map>
                 <key>name</key><string>windows64</string>
