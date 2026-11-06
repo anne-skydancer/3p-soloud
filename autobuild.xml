@@ -23,6 +23,7 @@
                     <string>lib/release/libsoloud.a</string>
                     <string>include/soloud/*.h</string>
                     <string>LICENSES/*.txt</string>
+                    <string>LICENSES/*-buildinfo.json</string>
                     <string>VERSION.txt</string>
                 </array>
                 <key>configurations</key>
@@ -49,6 +50,7 @@
                     <string>lib/release/soloud.lib</string>
                     <string>include/soloud/*.h</string>
                     <string>LICENSES/*.txt</string>
+                    <string>LICENSES/*-buildinfo.json</string>
                     <string>VERSION.txt</string>
                 </array>
                 <key>configurations</key>

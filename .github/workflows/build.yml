@@ -7,7 +7,11 @@ permissions:
   contents: read
 env:
   AUTOBUILD_BUILD_ID: ${{ github.run_id }}
+  SOLOUD_UPSTREAM: https://github.com/jarikomppa/soloud.git
+  SOLOUD_UPSTREAM_HASH: e82fd32c1f62183922f08c14c814a02b58db1873
 jobs:
+  # Three independent package jobs: windows64, linux64 (ubuntu-latest host) and
+  # linux64-lts (ubuntu:24.04 container). None depends on another.
   package:
     strategy:
       fail-fast: false
@@ -27,14 +31,58 @@ jobs:
         run: python -m pip install autobuild==3.9.3
       - name: Build and test
         run: autobuild build -A 64 -c release
-      - name: Package
-        run: autobuild package -A 64 -c release --archive-format tzst
       - name: Report glibc requirement (Linux, report only)
         if: runner.os == 'Linux'
-        run: python .github/scripts/glibc_report.py stage
+        run: python .github/scripts/glibc_report.py --json glibc.json stage
+      - name: Write build-info file
+        shell: bash
+        run: |
+          python .github/scripts/buildinfo.py --name soloud --flavour "${{ matrix.platform }}" \
+            --upstream-version 202002 --upstream-source "$SOLOUD_UPSTREAM" --upstream-hash "$SOLOUD_UPSTREAM_HASH" \
+            --build-type "Release, static, PIC (miniaudio backend; bounded multichannel and device-selection patches)" \
+            --glibc-json glibc.json --option WITH_MINIAUDIO=1 --option WITH_NOSOUND=1 --option WITH_NULL=1
+      - name: Package
+        run: autobuild package -A 64 -c release --archive-format tzst
       - name: Upload tested package
         uses: actions/upload-artifact@v4
         with:
           name: soloud-${{ matrix.platform }}
+          path: '*.tar.zst'
+          if-no-files-found: error
+  package-lts:
+    runs-on: ubuntu-latest
+    container: ubuntu:24.04
+    steps:
+      - name: Install build tools
+        run: |
+          apt-get update
+          DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+            ca-certificates git build-essential cmake make binutils python3 python3-venv
+      - uses: actions/checkout@v4
+      - name: Install packaging tools
+        run: |
+          python3 -m venv /opt/ab
+          /opt/ab/bin/pip install autobuild==3.9.3
+          echo /opt/ab/bin >> "$GITHUB_PATH"
+      - name: Build and test
+        run: autobuild build -A 64 -c release
+      - name: Check glibc requirement (fails above 2.39)
+        run: python .github/scripts/glibc_report.py --max 2.39 --json glibc.json stage
+      - name: Write build-info file
+        run: |
+          python .github/scripts/buildinfo.py --name soloud --flavour linux64-lts \
+            --upstream-version 202002 --upstream-source "$SOLOUD_UPSTREAM" --upstream-hash "$SOLOUD_UPSTREAM_HASH" \
+            --build-type "Release, static, PIC (miniaudio backend; bounded multichannel and device-selection patches)" \
+            --glibc-json glibc.json --option WITH_MINIAUDIO=1 --option WITH_NOSOUND=1 --option WITH_NULL=1
+      - name: Package
+        run: autobuild package -A 64 -c release --archive-format tzst
+      - name: Name the archive linux64-lts
+        run: |
+          for f in *-linux64-*.tar.zst; do mv "$f" "${f/-linux64-/-linux64-lts-}"; done
+          ls -l *.tar.zst
+      - name: Upload tested package
+        uses: actions/upload-artifact@v4
+        with:
+          name: soloud-linux64-lts
           path: '*.tar.zst'
           if-no-files-found: error
