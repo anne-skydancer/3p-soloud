@@ -62,9 +62,11 @@ def nm_syms(f):
             continue
         t, s = m.groups()
         s = s.split('@')[0]
+        if s == '_GLOBAL_OFFSET_TABLE_':
+            continue  # linker-synthesised
         if t == 'U':
             und.add(s)
-        elif t in 'wWvV':
+        elif t in 'wv':
             pass
         elif t != '-' and t != 'N':
             dfn.add(s)
