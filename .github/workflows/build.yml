@@ -10,14 +10,14 @@ env:
   SOLOUD_UPSTREAM: https://github.com/jarikomppa/soloud.git
   SOLOUD_UPSTREAM_HASH: e82fd32c1f62183922f08c14c814a02b58db1873
 jobs:
-  # Three independent package jobs: windows64, linux64 (ubuntu-latest host) and
+  # Three independent package jobs: windows64, linux64 (ubuntu-26.04 host) and
   # linux64-lts (ubuntu:24.04 container). None depends on another.
   package:
     strategy:
       fail-fast: false
       matrix:
         include:
-          - os: ubuntu-latest
+          - os: ubuntu-26.04
             platform: linux64
           - os: windows-2022
             platform: windows64
