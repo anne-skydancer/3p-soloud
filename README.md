@@ -53,8 +53,8 @@ device output or all viewer audio features.
 
 Linux uses GCC/Clang, CMake 3.24+, Make, Git and autobuild, with the same build
 commands. It produces position-independent `lib/release/libsoloud.a`; consumers
-must link the platform thread and dynamic-loader libraries. CI builds on Ubuntu
-22.04 and Windows 2022 and runs the same headless callback test before packaging.
+must link the platform thread and dynamic-loader libraries. CI builds on ubuntu-latest (Ubuntu 24.04 at the time of writing,
+glibc 2.39) and Windows 2022 and runs the same headless callback test before packaging.
 Linux hardware playback and device switching remain unqualified.
 
 Release publication and

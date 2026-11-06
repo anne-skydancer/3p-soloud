@@ -13,7 +13,7 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - os: ubuntu-22.04
+          - os: ubuntu-latest
             platform: linux64
           - os: windows-2022
             platform: windows64
@@ -29,6 +29,9 @@ jobs:
         run: autobuild build -A 64 -c release
       - name: Package
         run: autobuild package -A 64 -c release --archive-format tzst
+      - name: Report glibc requirement (Linux, report only)
+        if: runner.os == 'Linux'
+        run: python .github/scripts/glibc_report.py stage
       - name: Upload tested package
         uses: actions/upload-artifact@v4
         with:
